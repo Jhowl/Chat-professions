@@ -12,25 +12,28 @@
 
 <style>
   .conversation {
+    display: block;
     flex: 1;
     list-style: none;
     margin: 0;
     padding: 0;
     overflow-y: auto;
+    width: 100%;
   }
-  
+
   .conversation li {
+    /* display: block; */
     margin-bottom: 1rem;
     padding: 0.5rem;
     border-radius: 0.25rem;
     background-color: #eee;
     word-break: break-word;
   }
-  
+
   .conversation li.is-user {
     display: block;
     background-color: #4794e7;
-    color: white; 
+    color: white;
     text-align: right;
   }
 </style>

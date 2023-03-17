@@ -8,14 +8,13 @@
   let isDropdownOpen = true;
 
   function changeChatbot(chatbot) {
-    currentChatbot = chatbot;
-    dispatch('changeChatbot', chatbot);
+    currentChatbot = chatbot.value;
+    // dispatch('changeChatbot', chatbot);
     isDropdownOpen = false;
   }
 
   onMount(async () => {
     chatbots = getChatbots()
-    console.log(chatbots)
   });
 
 </script>
@@ -27,7 +26,7 @@
   <div class="select-container">
       <ul>
         {#each chatbots as chatbot}
-          <li class="selected-value" on:click={() => changeChatbot(chatbot.key)} on:keydown={() => changeChatbot(chatbot.key)}>{chatbot.value}</li>
+          <li class="selected-value" on:click={() => changeChatbot(chatbot)} on:keydown={() => changeChatbot(chatbot)}>{chatbot.value}</li>
         {/each}
       </ul>
   </div>

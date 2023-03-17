@@ -30,7 +30,7 @@
   .user-input {
     display: block;
     align-items: center;
-    padding: 1rem;
+    /* padding: 1rem; */
     background-color: #eee;
     width: 100%;
   }
