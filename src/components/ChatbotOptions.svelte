@@ -4,13 +4,11 @@
   const dispatch = createEventDispatcher();
 
   let chatbots = [];
-  let currentChatbot = 'Bot 1';
-  let isDropdownOpen = true;
+  let currentChatbot = ''
 
   function changeChatbot(chatbot) {
     currentChatbot = chatbot.value;
-    // dispatch('changeChatbot', chatbot);
-    isDropdownOpen = false;
+    dispatch('changeChatbot', chatbot);
   }
 
   onMount(async () => {

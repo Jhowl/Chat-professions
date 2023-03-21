@@ -1,32 +1,72 @@
 <script>
+  import { Configuration, OpenAIApi } from "openai"
+
 	import Conversation from './components/Conversation.svelte'
 	import ChatbotOptions from './components/ChatbotOptions.svelte'
 	import UserInput from './components/UserInput.svelte'
 
-	let currentChatbot = 'bot1';
+  const configuration = new Configuration({
+    apiKey: "",
+  });
 
-	let conversation = [
-	  { isUser: false, text: 'Hello, I am a chatbot.' },
-	  { isUser: true, text: 'How can I help you?' }];
+  const openai = new OpenAIApi(configuration);
+
+	let conversation = {
+    messages: [
+	    { isUser: false, text: 'Hello, Eu sou especialista.' },
+    ],
+    loading: false
+  };
+
+  let bot = {}
+
+  async function changeChatbot(e) {
+    bot = e.detail
+    console.log(bot)
+    conversation = {
+      messages: [
+        { isUser: false, text: `Faça sua solitacao para o: ${bot.value}` },
+      ],
+      loading: false
+    };
+  }
 
 	async function sendMessage(e) {
-		console.log('Sending message', e.detail);
-    console.log(currentChatbot)
-	//   const response = await fetch(`/api/chatbot/${currentChatbot}`, {
-	// 	method: 'POST',
-	// 	body: JSON.stringify({ text }),
-	// 	headers: { 'Content-Type': 'application/json' }
-	//   });
-	//   const data = await response.json();
-  conversation = [...conversation, { isUser: true, text: e.detail }];
-	}
+    const system = bot.prompt + "And every response you be in portuguese."
+
+    conversation.messages = [...conversation.messages, { isUser: true, text: e.detail }]
+    conversation.loading = true
+
+    const messages = conversation.messages.map((message) => {
+      return {
+        role: message.isUser ? "user" : "assistant",
+        content: message.text,
+      }
+    })
+
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {role: "system", content: system},
+        ...messages,
+      ],
+    })
+
+    if (response.data.choices.length === 0) {
+      conversation.messages = [...conversation.messages, { isUser: false, text: 'I am not sure I understand.' }];
+      return;
+    }
+
+    conversation.loading = false
+    conversation.messages = [...conversation.messages, { isUser: false, text: response.data.choices[0].message.content }];
+  }
 
 </script>
 
 <div class="chat-container">
-	<ChatbotOptions />
+	<ChatbotOptions on:changeChatbot={changeChatbot} />
 
-	<div class="conversation-container">
+	<div class="conversation-container" class:has-bot={Object.keys(bot).length === 0}>
 	  <Conversation conversation={conversation} />
 	  <UserInput on:sendMessage={sendMessage} />
 	</div>
@@ -37,7 +77,6 @@
 	  display: flex;
 	  height: 100%;
     width: 100%;
-    /* border: 40px solid black; */
     justify-content: space-evenly;
 	}
 
@@ -50,6 +89,10 @@
     margin-bottom: 40px;
     height: 100%;
 	}
+
+  .conversation-container.has-bot {
+    display: none;
+  }
 
 	@media screen and (min-width: 768px) {
 	  .chat-container {

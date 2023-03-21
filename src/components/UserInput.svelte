@@ -1,8 +1,5 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-  // import Conversation from './components/Conversation.svelte'
-
-  // let currentChatbot = 'bot1';
   let text = '';
 
   const dispatch = createEventDispatcher();
@@ -12,13 +9,17 @@
     text = '';
   }
 
-
 </script>
 
 <div class="user-input">
   <form on:submit|preventDefault={sendMessage}>
     <textarea
       bind:value={text}
+      on:keydown={e => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      }}
       placeholder="Type your message here"
       rows="2"
     ></textarea>
@@ -30,24 +31,25 @@
   .user-input {
     display: block;
     align-items: center;
-    /* padding: 1rem; */
     background-color: #eee;
     width: 100%;
   }
 
   .user-input textarea {
     flex: 1;
-    margin-right: 1rem;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 0.25rem;
-    max-height: 200px;
-    resize: none;
     width: 100%;
+    height: 200px;
+    padding: 0.5rem;
+    margin: 0;
+    font-size: 19px;
   }
 
   .user-input button {
+    margin-top: 10px;
     padding: 0.5rem 1rem;
+    width: 100%;
   }
 
 
